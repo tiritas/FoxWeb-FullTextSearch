@@ -1,0 +1,802 @@
+<html>
+<head>
+<title>FoxWeb Full-Text Search Engine Documentation</title>
+
+<style>
+body,td,p,li,dd,dt,ul,dl,ol {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+}
+
+p {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	margin-top: 5px;
+	margin-bottom: 15px;
+}
+
+small {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+}
+
+big {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 12pt;
+}
+
+strong {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 14pt;
+}
+
+h1 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 15pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+h2 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+h3 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 13pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+h4 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+h5 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+h6 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+
+code {
+	color: #990000;
+	font-family: courier new, courier, monospace;
+}
+
+.gridList {
+	empty-cells: show;
+	border-collapse: collapse;
+	width: 75%;
+}
+
+.gridList td, .gridList th {
+	border: 1px solid #000000;
+	font-size: 10pt;
+}
+
+.gridList th {
+	font-weight: bold;
+}
+
+
+A:link {color: #0000cc; text-decoration: none;}
+A:visited {color: #0000cc; text-decoration: none;}
+A:link {color: #0000cc; text-decoration: none;}
+A:hover {color: #0000cc; text-decoration: underline;}
+
+.source {border: 1px solid #000000; padding: 5px; background-color: #ffffcc}
+.output {border: 1px solid #000000; padding: 5px; background-color: #cccc99}
+.fwx {color: #0000ff}
+.comment {color: #999999}
+</style>
+
+</head>
+<body bgcolor="#FFFFFF" text="#000000" vlink="#0066cc" alink="#0066cc" link="#0066cc" leftmargin="5" topmargin="5" marginwidth="5" marginheight="5">
+
+<h1>FoxWeb Full-Text Search Engine</h1>
+<h2>Table of Contents</h2>
+<p>
+<a href="#Description">Description</a><br>
+<a href="#SearchResults">Working with Search Results</a><br>
+<a href="#HowSearchesWork">How Searches Work</a><br>
+<a href="#GettingHelp">Getting Help</a><br>
+<a href="#ContactInformation">Contact Information</a><br>
+<a href="#FTExample">Sample Application</a><br>
+<a href="#Download">Download</a><br>
+<a href="#FileList">File List</a><br>
+<a href="#Reference">Reference</a></p>
+
+<a name="Description"></a><h3>Description</h3>
+<p>The FoxWeb Full-Text Search Engine is a VFP class that can be used to facilitate fast and efficient full-text searches in FoxPro tables.  In order to support this functionality, the class creates an index, mapping each word contained in one or more field(s) in the source table.  The fields being indexed may contain either plain text, or HTML data.  In the case of HTML data, all HTML tags are removed before indexing the remaining text. This class was developed to provide full-text search capabilities for the FoxWeb
+Forum, but is now provided for free to the FoxPro community.</p>
+
+<p>The class supports the following search features:</p>
+<ul>
+<li>Wild-card matching (* and ?)</li>
+<li>Search for phrases (consecutive words)</li>
+<li>Search for all, or any terms in the search phrase</li>
+</ul>
+
+<a name="SearchResults"></a><h3>Working with Search Results</h3>
+<p>The <a href="#Search">Search</a> method returns matching results in a cursor, which contains the key field values of matching records, as well as the total number of matches in each record.  This cursor can be joined with the source table, using a number of methods.  Additional WHERE clauses can be used to further limit the results:</p>
+
+<table width="100%" cellpadding=5><tr><td class="source"><code>
+<span class="fwx"><nobr>SELECT * FROM messages<br>
+JOIN Results ON messages.MsgID = Results.IndexValue<br>
+WHERE messages.timestamp &gt; M.StartDate<br>
+ORDER BY Results.TotWords, Results.Frequency, messages.timestamp</nobr></span>
+</code></td></tr></table>
+
+<p>A more detailed example can be found in the description of the <a href="#Search">Search</a>
+method in the <a href="#Reference">Reference</a> section.</p>
+
+<a name="HowSearchesWork"></a><h3>How Searches Work</h3>
+<p>The Full-Text Search object first splits the search phrase into one or more search terms, separated from each other by either spaces, or commas.  Search terms can be single words, a compound words (two or more words linked by a dash, or other symbol), or phrases (sets of words enclosed in double quotes).  Each search term is broken down into the individual words in it (a word is a series of letters, numbers and underscore characters), while other characters are discarded.  This means that the search term "tree-top" will match any occurrences of the word "tree", followed by "top", including "tree-top", "tree top" and "tree, top".  The search engine then tries to find matches of the various search terms, taking into account wild-card characters in them.</p>
+
+<hr>
+<a name="Support"></a><h2>Support</h2>
+<a name="GettingHelp"></a><h3>Getting Help</h3>
+<p>The FoxWeb Full-Text Search Engine is provided to the FoxPro community for
+free, so we can't offer direct support.&nbsp; However, If you have a question
+you can visit the <a href="http://www.foxweb.com"> FoxWeb Forum</a>, where you can search previous postings, post a
+new message and get help from other users and the developers.</p>
+
+<a name="ContactInformation"></a><h3>Contact Information</h3>
+
+<p>You may send bug reports and other correspondence to <a href="mailto:support@foxweb.com">support@foxweb.com</a>.</p>
+
+<hr>
+<a name="FTExample"></a><h2>Sample Application</h2>
+<p>The FTExample form illustrates the use of most of the FoxWeb Full-Text Search
+Engine's features.&nbsp; The form's Init method instantiates a full-text object,
+from a sub-class that is defined in FTWrapper.prg.&nbsp; The FTWrapper sub-class
+is used in order to provide status updates while the object is in the process of
+indexing.&nbsp; When you run this form from VFP, you will first be asked to
+select the table you would like to work with.&nbsp; The table sample.dbf is
+provided, but you can use this form with your own tables.&nbsp;</p>
+<p>The FTExample form has three tabs, each with a distinct use:</p>
+<h6>Create Index</h6>
+<p>This tab allows the creation of a full-text index for any VFP table.&nbsp; By
+default, its fields are populated for indexing sample.dbf, which is provided
+with this sample application.&nbsp; Although some of the controls in this page
+may appear confusing at first, they correspond to properties and methods of the
+Full-Text Search Engine class, so they are pretty easy to figure out.&nbsp; The
+three buttons in this page correspond to the <a href="#CreateIndex">CreateIndex</a>,
+<a href="#UpdateIndex">UpdateIndex</a> and <a href="#DeleteIndex">DeleteIndex</a>
+methods, while all remaining controls correspond to various properties that
+affect the indexing process.</p>
+<h6>Search</h6>
+<p>The Search tab provides the ability to perform full-text searches against an
+indexed table.&nbsp; The controls in this page are only enabled if the selected
+table has already been indexed.</p>
+<h6>Index Information</h6>
+<p>This tab displays information about the full-text index of the selected
+table.&nbsp; This information is retrieved via the <a href="#GetIndexAttributes">GetIndexAttributes</a>
+ method.</p>
+
+<hr>
+<a name="Download"></a><h2>Download</h2>
+<p>The latest version can always be downloaded from the FoxWeb web site:</p>
+
+<p><span style="background-color: #ffffcc; border: 1px solid black; padding: 3px;">
+		<a href="http://www.foxweb.com/fwFullText/FoxWebFullText.zip"><b>Download the FoxWeb FullText class and support files</b></a>
+</span></p>
+
+<p>After downloading the zip file, expand its contents in an empty folder on your computer.</p>
+
+<hr>
+<a name="FileList"></a><h2>File List</h2>
+
+<table border=0 cellpadding=5>
+<tr valign="top">
+	<td width="30%" nowrap>
+		fwFullText7.fxp, fwFullText8.fxp, etc.
+	</td>
+	<td width="70%">
+		Compiled versions of the fwFullText class, each created with a different
+		version of VFP.&nbsp; You can either rename
+		the one that corresponds to your version of VFP to fwFullText.fxp, or
+		you can use the technique utilized in the <a href="#FTExample">FTExample</a>
+		sample form to automatically load the correct file.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		fwUtil.prg
+	</td>
+	<td width="70%">
+		FoxWeb utility class.&nbsp; This file contains a number of useful
+		all-purpose methods.&nbsp; It is required by the fwFullText
+		class and must be stored in the same location.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		fwFullText.htm
+	</td>
+	<td width="70%">
+		This documentation.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		FTExample.sct, FTExample.scx
+	</td>
+	<td width="70%">
+		Sample form that illustrates the use of the FoxWeb Full-Text Search
+		Engine.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		FTWrapper.prg
+	</td>
+	<td width="70%">
+		This file sub-classes the fwFullText class and is utilized by the <a href="#FTExample">FTExample</a>
+		sample application.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		FullTextNoise.txt
+	</td>
+	<td width="70%">
+		Sample <a href="#NoiseFile"> noise file</a> utilized by the <a href="#FTExample">FTExample</a>
+		sample application.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+	sample.dbf, sample.fpt, sample.cdx
+	</td>
+	<td width="70%">
+	Sample data table utilized by the <a href="#FTExample">FTExample</a>
+		sample application.
+	</td>
+</tr>
+</table>
+
+
+<hr>
+<a name="Reference"></a><h2>Reference of fwFullText Class</h2>
+<h3>Properties</h3>
+
+<table border=0 cellpadding=5>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#Errors"><b>Errors</b></a>
+	</td>
+	<td width="70%">
+		Contains messages generated by the Full-Text Search Engine.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#ExclusiveIndexing"><b>ExclusiveIndexing</b></a>
+	</td>
+	<td width="70%">
+		Should be set before a call to the <a href="#CreateIndex">CreateIndex</a> and <a href="#UpdateIndex">UpdateIndex</a> methods to determine whether indexing should be done in exclusive or shared mode.  Exclusive mode is faster, but it locks the full search index, preventing searches from occurring during the indexing process.  Shared mode allows the partial index to be searched.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#LastCorrectedSearchPhrase"><b>LastCorrectedSearchPhrase</b></a>
+	</td>
+	<td width="70%">
+		Returns a syntactically valid search phrase after a call to the <a href="#Search">Search</a> method.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#LastSearchTally"><b>LastSearchTally</b></a>
+	</td>
+	<td width="70%">
+		Returns the number of matches found by the last call to the <a href="#Search">Search</a> method.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#MaxHits"><b>MaxHits</b></a>
+	</td>
+	<td width="70%">
+		Should be set to the maximum number of results to return.  If the search yields more records, then an error is returned.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#MaxHitsPercent"><b>MaxHitsPercent</b></a>
+	</td>
+	<td width="70%">
+		Should be set to the maximum percentage of records from searched table to return.  If the search yields more records, then an error is returned.  For example, if the table contains 150 records and more than 75 (50%) meet the search criteria, then an error is returned.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#Table"><b>Table</b></a>
+	</td>
+	<td width="70%">
+		Must point to the table to be indexed.  It should be set to point to the same table before a call to any of the methods below.
+	</td>
+</tr>
+</table>
+
+
+<h3>Methods</h3>
+
+<table border=0 cellpadding=5>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#CreateIndex"><b>CreateIndex</b></a>
+	</td>
+	<td width="70%">
+		Creates a full-text index.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#DeleteIndex"><b>DeleteIndex</b></a>
+	</td>
+	<td width="70%">
+		Deletes an existing full-text index.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#GetIndexAttributes"><b>GetIndexAttributes</b></a>
+	</td>
+	<td width="70%">
+		Returns information about an existing full-text index.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#IsIndexed"><b>IsIndexed</b></a>
+	</td>
+	<td width="70%">
+		Returns a boolean value, indicating whether a full-text index has been created for the selected table.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#Search"><b>Search</b></a>
+	</td>
+	<td width="70%">
+		Performs a full-text search.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#UpdateIndex"><b>UpdateIndex</b></a>
+	</td>
+	<td width="70%">
+		Updates a previously-created full-text index.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#UpdateRecordIndex"><b>UpdateRecordIndex</b></a>
+	</td>
+	<td width="70%">
+		Updates the full-text index for a particular record.  It can be used to keep the full-text index up to date continuously as records are added, edited and deleted.
+	</td>
+</tr>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#Version"><b>Version</b></a>
+	</td>
+	<td width="70%">
+		Returns version information.
+	</td>
+</tr>
+</table>
+
+
+
+<h3>Events</h3>
+
+<table border=0 cellpadding=5>
+<tr valign="top">
+	<td width="30%" nowrap>
+		<a href="#StatusMessage"><b>StatusMessage</b></a>
+	</td>
+	<td width="70%">
+		Gets called during full-text index creation.
+	</td>
+</tr>
+</table>
+
+<hr>
+<a name="Errors"></a><h3>Errors Property</h3>
+<h5>Description</h5>
+<p>The Errors property is an object, based on the Errors class, which contains messages generated by the various methods of the Full-Text Search Engine.  It can be used to retrieve errors and other messages after a call to a method of the fwFullText object.  This property supports the following properties and methods:</p>
+	<table border=0 cellpadding=2 cellspacing=0 class="gridList" align="center">
+	<tr valign="top">
+		<th nowrap>
+			Name
+		</th>
+		<th nowrap>
+			Type
+		</th>
+		<th>
+			Description
+		</th>
+	</tr>
+	<tr valign="top">
+		<td nowrap>
+			<i>Count</i>
+		</td>
+		<td nowrap>
+			property
+		</td>
+		<td>
+			Returns the total number of messages.
+		</td>
+	</tr>
+	<tr valign="top">
+		<td nowrap>
+			<i>Item</i>
+		</td>
+		<td nowrap>
+			method
+		</td>
+		<td>
+			The Item method accepts a single numerical argument, specifying the requested message and returns that message as an Error object.  Error objects support the following properties: <i>Description</i> (message text), <i>Number</i> (the error number), <i>Severity</i> (a number indicating the severity of the error), <i>Source</i> (character string, indicating the source of the message).
+		</td>
+	</tr>
+	</table>
+<h5>Example</h5>
+<table width="100%" cellpadding=5><tr><td class="source"><code>
+<span class="fwx"><nobr>
+oFullText = NEWOBJECT('FullText', 'fwFullText.fxp')<br>
+oFullText.Search('keyword', 'ResultCursor', 'FieldToSearch')<br>
+IF oFullText.Errors.Count &gt; 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;* Read each message in the Errors object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;FOR M.i = 1 TO oFullText.Errors.Count<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Retrieve the current error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;? 'Message: ' + oFullText.Errors.Item(M.i).Description<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;? 'Number: ' + FORMAT(oFullText.Errors.Item(M.i).Number)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;? 'Severity: ' + FORMAT(oFullText.Errors.Item(M.i).Severity)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;? 'Source: ' + oFullText.Errors.Item(M.i).Source<br>
+&nbsp;&nbsp;&nbsp;&nbsp;NEXT<br>
+ENDIF</nobr></span>
+</code></td></tr></table>
+<p>The above code checks if there are any messages and lists them on the screen.</p>
+
+<hr>
+<a name="ExclusiveIndexing"></a><h3>ExclusiveIndexing Property</h3>
+<h5>Description</h5>
+<p>Should be set before a call to the <a href="#CreateIndex">CreateIndex</a> and <a href="#UpdateIndex">UpdateIndex</a> methods to determine whether indexing should be done in exclusive or shared mode.  Exclusive mode is faster, but it locks the full search index, preventing searches from occurring during the indexing process.  Shared mode allows the partial index to be searched.</p>
+<p>This property is <b>read/write</b>.</p>
+<h5>Syntax</h5>
+<p><b>oFullText</b>.<b>ExclusiveIndexing</b> = .T.</p>
+
+<hr>
+<a name="LastCorrectedSearchPhrase"></a><h3>LastCorrectedSearchPhrase Property</h3>
+<h5>Description</h5>
+<p>Returns a syntactically valid search phrase after a call to the <a href="#Search">Search</a> method.  Can be used to replace the contents of the search form with a valid search.</p>
+<p>This property is <b>read only</b>.</p>
+<h5>Syntax</h5>
+<p><i>cLastCorrectedSearchPhrase</i> = <b>oFullText</b>.<b>LastCorrectedSearchPhrase</b></p>
+
+<hr>
+<a name="LastSearchTally"></a><h3>LastSearchTally Property</h3>
+<h5>Description</h5>
+<p>Returns the number of matches found by the last call to the <a href="#Search">Search</a> method.</p>
+<p>This property is <b>read only</b>.</p>
+<h5>Syntax</h5>
+<p><i>nLastSearchTally</i> = <b>oFullText</b>.<b>LastSearchTally</b></p>
+
+<hr>
+<a name="MaxHits"></a><h3>MaxHits Property</h3>
+<h5>Description</h5>
+<p>Should be set to the maximum number of results to return.  If the search yields more records, then an error is returned.  The default value for this property is 100.</p>
+<p>This property is <b>read/write</b>.</p>
+<h5>Syntax</h5>
+<p><b>oFullText</b>.<b>MaxHits</b> = 100</p>
+
+<hr>
+<a name="MaxHitsPercent"></a><h3>MaxHitsPercent Property</h3>
+<h5>Description</h5>
+<p>Should be set to the maximum percentage of records from searched table to return.  If the search yields more records, then an error is returned.  For example, if the table contains 150 records and more than 75 (50%) meet the search criteria, then an error is returned.  The default value for this property is 50.</p>
+<p>This property is <b>read/write</b>.</p>
+<h5>Syntax</h5>
+<p><b>oFullText</b>.<b>MaxHitsPercent</b> = 50</p>
+
+<hr>
+<a name="Table"></a><h3>Table Property</h3>
+<h5>Description</h5>
+<p>Must point to the table to be indexed.  It should be set to point to the same table before a call to any of the methods below.</p>
+<p>This property is <b>read/write</b>.</p>
+<h5>Syntax</h5>
+<p><b>oFullText</b>.<b>Table</b> = 'c:\data\messages.dbf'</p>
+
+<hr>
+<a name="CreateIndex"></a><h3>CreateIndex  Method</h3>
+<h5>Description</h5>
+<p>Creates a full-text index from scratch.</p>
+<h5>Syntax</h5>
+<p><i>bSuccess</i> = <b>oFullText</b>.<b>CreateIndex</b>(<i>cKeyField</i>, <i>cTextFieldString</i>, <i>bProximity</i>,
+cNoiseWords, <i>nKeywordIDSize</i>)</p>
+<h5>Parameters</h5>
+<dl>
+<dt><i>cKeyField</i></dt>
+<dd><p>The name of the key field, which is used to uniquely identify records in the table being indexed.</p></dd>
+<dt><i>cTextFieldString</i></dt>
+<dd><p>A comma-delimited string, containing all the fields that should be indexed.  The full-text engine can index character and memo fields.  Each field name can be followed with an optional colon (:) character and a content type indicator.  In these cases, the content type-specific keywords will be omitted from the index.  For example, "content:html" can be used to indicate that the content field contains HTML data and that all HTML tags are to be stripped before the contents of the field are indexed.  Currently the only supported content type is "html".</p></dd>
+<dt><i>bProximity</i></dt>
+<dd><p>Boolean value, indicating whether the index should contain word proximity information.  When this value is set to .F., then the index files are smaller, but you will not be able to search for phrases, or compound words.  The recommended value for bProximity is .T..</p></dd>
+<dt><i>cNoiseWords</i></dt>
+<dd><p>A delimited list of words to exclude from the full-text index.&nbsp; The
+	words can be separated with commas, spaces, or carriage returns.&nbsp; Specifying noise words that are used too often in the indexed table can
+	dramatically reduce the size of your full-text index, but will prevent searching on those words.  The
+	provided FullTextNoise.txt file contains a good sample of words for the English language.</p></dd>
+</dl>
+<dl>
+<dt><i>nKeywordIDSize</i></dt>
+<dd><p>The number of bytes used to store keyword IDs.  This value can be either 2, or 4.  If you expect the number of unique words being indexed to exceed 64,000, then you should use 4, otherwise use 2, which results in a smaller full-text index.  If you specify a value of 2 and the number of keywords is higher than what can be represented with two bytes, you will receive an error message.</p></dd>
+</dl>
+<h5>Return Value</h5>
+<p>Boolean: Whether the call to the current method succeeded.</p>
+<h5>Comments</h5>
+<p>A text message, providing statistics and final results of the indexing process is inserted in the <a href="#Errors">Errors</a> object.</p>
+
+<h5>Example</h5>
+<table width="100%" cellpadding=5><tr><td class="source"><code>
+<span class="fwx"><nobr>oFullText = NEWOBJECT('FullText', 'fwFullText.fxp')<br>
+oFullText.Table = 'ForumMessages'<br>
+RetValue = oFullText.CreateIndex('MsgId', 'content:html,subject,user', .T.,
+FILETOSTR('FullTextNoise.txt'), 2)<br>
+RELEASE oFullText<br>
+CLEAR CLASS fulltext</nobr></span>
+</code></td></tr></table>
+
+<hr>
+<a name="DeleteIndex"></a><h3>DeleteIndex  Method</h3>
+<h5>Description</h5>
+<p>Deletes a previously-created full-text index.</p>
+<h5>Syntax</h5>
+<p><i>bSuccess</i> = <b>oFullText</b>.<b>DeleteIndex</b>()</p>
+<h5>Return Value</h5>
+<p>Boolean: Whether the index was deleted successfully.</p>
+
+<hr>
+<a name="GetIndexAttributes"></a><h3>GetIndexAttributes  Method</h3>
+<h5>Description</h5>
+<p>Retrieves information about an existing full-text index.</p>
+<h5>Syntax</h5>
+<p><i>bSuccess</i> = <b>oFullText</b>.<b>GetIndexAttributes</b>([@<i>cKeyField</i>], [@<i>aTextFields</i>], [@<i>bProximity</i>],
+[@cNoiseWords], [@<i>nKeywordIDSize</i>])</p>
+
+<h5>Parameters</h5>
+<p>This method expects four memory variables, passed by reference (preceded with the @ character).  These variables are populated with the following information.
+<dl>
+<dt><i>cKeyField</i></dt>
+<dd><p>The name of the key field.</p></dd>
+<dt><i>aTextFields</i></dt>
+<dd><p>A two-dimensional array, containing all index fields (one in each row).  The first column contains the name of the field and the second contains the data type (currently "html", or nothing).</p></dd>
+<dt><i>bProximity</i></dt>
+<dd><p>Indicates whether the index contains word proximity information.</p></dd>
+<dt>cNoiseWords</dt>
+<dd><p>Comma separated list of noise words excluded from the full-text index.</p></dd>
+</dl>
+<dl>
+<dt><i>nKeywordIDSize</i></dt>
+<dd><p>Indicates the number of bytes that used to store keyword IDs.</p></dd>
+</dl>
+<h5>Return Value</h5>
+<p>Boolean: Indicates whether the method call succeeded.</p>
+
+<hr>
+<a name="IsIndexed"></a><h3>IsIndexed  Method</h3>
+<h5>Description</h5>
+<p>Can be used to determine whether a full-text index exists for the selected table.</p>
+<h5>Syntax</h5>
+<p><i>bIsIndexed</i> = <b>oFullText</b>.<b>IsIndexed</b>()</p>
+<h5>Return Value</h5>
+<p>Boolean: The return value is .T. if a full-text index has already been created for the selected table.</p>
+
+<hr>
+<a name="Search"></a><h3>Search  Method</h3>
+<h5>Description</h5>
+<p>The Search performs a full-text search, using a previously-created index.</p>
+<h5>Syntax</h5>
+<p><i>bSuccess</i> = <b>oFullText</b>.<b>Search</b>(<i>cSearchPhrase</i>, <i>cResultCursorName</i>, [<i>cTextFieldString</i>], [<i>bAnyWords</i>])</p>
+<h5>Parameters</h5>
+<dl>
+<dt><i>cSearchPhrase</i></dt>
+<dd><p>The search conditions, which consists of a series of space-separated search terms.  Each term can either be a word or a phrase enclosed in quotes.  Wildcard characters (* for multiple characters and ? for single characters) can be used, but they can slow the search down if they are at the beginning of a word.  For example, searching on "Cook*" is fast, but searching on "*ing" is slower.</p></dd>
+<dt><i>cResultCursorName</i></dt>
+<dd><p>The name of the cursor, where the result set will be stored.  This cursor will contain three columns:</p>
+
+	<table border=0 cellpadding=2 cellspacing=0 class="gridList" align="center">
+	<tr valign="top">
+		<th nowrap>
+			<b>Field Name</b>
+		</th>
+		<th nowrap>
+			<b>Data Type</b>
+		</th>
+		<th>
+			<b>Description</b>
+		</th>
+	</tr>
+	<tr valign="top">
+		<td nowrap>
+			<i>IndexValue</i>
+		</td>
+		<td nowrap>
+			Varies
+		</td>
+		<td>
+			The key of the matching record.  This data type of this field will match the data type of the corresponding field in the table being searched.
+		</td>
+	</tr>
+	<tr valign="top">
+		<td nowrap>
+			<i>TotWords</i>
+		</td>
+		<td nowrap>
+			Numeric
+		</td>
+		<td>
+			The number of terms from <i>cSearchPhrase</i>, contained in this particular record.  If <i>bAnyWords</i> was .F. then this value will always match the total number of terms passed in <i>cSearchPhrase</i>.
+		</td>
+	</tr>
+	<tr valign="top">
+		<td nowrap>
+			<i>Frequency</i>
+		</td>
+		<td nowrap>
+			Numeric
+		</td>
+		<td>
+			The total number of times any of the terms contained in <i>cSearchPhrase</i> were found in this particular record.
+		</td>
+	</tr>
+	</table>
+
+<p>The calling program can do additional search by using a SELECT WHERE KeyField IN (SELECT KeyField FROM ResultCursorName).</p></dd>
+<dt><i>cTextFieldString</i></dt>
+<dd><p>An optional comma-delimited string, containing all the fields that should be searched.  Obviously, all fields in the list must have already been indexed via the <a href="#CreateIndex">CreateIndex</a> method.  If cTextFieldString is not passed then all indexed fields are searched.</p></dd>
+<dt><i>bAnyWords</i></dt>
+<dd><p>A boolean value, indicating whether the Search method will look for records containing all search terms (AND), or any search terms (OR).  If this argument is not passed then the search will default to matching only records containing all search terms.</p></dd>
+</dl>
+<h5>Return Value</h5>
+<p>Boolean: Indicates whether the method encountered errors.  Use the <a href="#Errors">Errors</a> object to retrieve details about any error(s).</p>
+
+<h5>Example</h5>
+<table width="100%" cellpadding=5><tr><td class="source"><code>
+<span class="fwx"><nobr>oFullText = NEWOBJECT('FullText', 'fwFullText.fxp')<br>
+oFullText.Table = 'ForumMessages'<br>
+M.FTSearchResult = oFullText.Search(;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'"constant change" arbitrat*', ;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'FTSearch', ;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'MessageText')<br>
+M.SearchPhrase = oFullText.LastCorrectedSearchPhrase<br>
+DO CASE<br>
+CASE NOT M.FTSearchResult<br>
+&nbsp;&nbsp;&nbsp;&nbsp;M.ErrMsg = 'Search failed'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;* Read each message in the Errors object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;FOR M.i = 1 TO oFullText.Errors.Count<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Retrieve the current error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oError = oFullText.Errors.Item(M.i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M.ErrMsg = M.ErrMsg + oError.Description + CHR(13) + CHR(10)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;NEXT<br>
+CASE oFullText.LastSearchTally = 0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;M.ErrMsg = 'No messages meet your search criteria'<br>
+OTHERWISE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT ForumMessages.* FROM ForumMessages<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN FTSearch ON ForumMessages.MsgID = FTSearch.IndexValue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ORDER BY FTSearch.TotWords, FTSearch.Frequency<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...Add code to process the result set<br>
+ENDCASE<br>
+RELEASE oFullText<br>
+CLEAR CLASS fulltext</nobr></span>
+</code></td></tr></table>
+<p>This will search for records in which the MessageText field contains both the phrase "constant change" and at least one word starting with "arbitrat".  Results will be inserted in a cursor called 'FTSearch'.</p>
+
+<hr>
+<a name="UpdateIndex"></a><h3>UpdateIndex  Method</h3>
+<h5>Description</h5>
+<p>Updates a previously-created index.  It is more convenient than <a href="#CreateIndex">CreateIndex</a>, because you don't have to pass the key field and fields to be indexed again.  It uses the values originally passed to the CreateIndex method.</p>
+<h5>Syntax</h5>
+<p><i>bSuccess</i> = <b>oFullText</b>.<b>UpdateIndex</b>()</p>
+<h5>Return Value</h5>
+<p>Boolean: Whether the call to the current method succeeded.</p>
+<h5>Comments</h5>
+<p>A text message, providing statistics and final results of the indexing process is inserted in the <a href="#Errors">Errors</a> object.</p>
+
+<h5>Example</h5>
+<table width="100%" cellpadding=5><tr><td class="source"><code>
+<span class="fwx"><nobr>oFullText = NEWOBJECT('FullText', 'fwFullText.fxp')<br>
+oFullText.Table = 'ForumMessages'<br>
+RetValue = oFullText.UpdateIndex()<br>
+RELEASE oFullText<br>
+CLEAR CLASS fulltext</nobr></span>
+</code></td></tr></table>
+
+<hr>
+<a name="UpdateRecordIndex"></a><h3>UpdateRecordIndex  Method</h3>
+<h5>Description</h5>
+<p>Updates a previously-created full-search index for a particular record.  It can be used to keep the full-text index up to date as after individual records are added, edited and deleted, without the need to do a full re-index of the whole table.</p>
+<h5>Syntax</h5>
+<p><i>bSuccess</i> = <b>oFullText</b>.<b>UpdateRecordIndex</b>(<i>vIndexValue</i>[, <i>bDeleteRecord</i>])</p>
+<h5>Parameters</h5>
+<dl>
+<dt><i>vIndexValue</i></dt>
+<dd><p>The value of the key field of the record to be re-indexed.  This can be an existing record that was changed, or a new record just added to the table.  The data type of this parameter will match the data type of the key field in the table being indexed.</p></dd>
+<dt><i>bDeleteRecord</i></dt>
+<dd><p>This optional parameter should be set to .T. if the record specified by vIndexValue was deleted from the table.</p></dd>
+</dl>
+<h5>Return Value</h5>
+<p>Boolean: Whether the call to the current method succeeded</p>
+
+<h5>Example</h5>
+<table width="100%" cellpadding=5><tr><td class="source"><code>
+<span class="fwx"><nobr>UPDATE ForumMessages SET content = M.NewContent WHERE MsgID = M.MsgID<br>
+oFullText = NEWOBJECT('FullText', 'fwFullText.fxp')<br>
+oFullText.Table = 'ForumMessages'<br>
+RetValue = oFullText.UpdateRecordIndex(M.MsgID, .F.)<br>
+RELEASE oFullText<br>
+CLEAR CLASS fulltext</nobr></span>
+</code></td></tr></table>
+
+<hr>
+<a name="Version"></a><h3>Version  Method</h3>
+<h5>Description</h5>
+<p>Returns version information for the object.</p>
+<h5>Parameters</h5>
+<dl>
+<dt><i>nType</i></dt>
+<dd><p>Specifies the type of information requested.  If nType is 0 or omitted, then the method returns the
+	class version.  If nType is 1, then the method returns the version of VFP used to compile it.</p></dd>
+</dl>
+<h5>Syntax</h5>
+<p><i>nVersion</i> = <b>oFullText</b>.<b>Version</b>([nType])</p>
+<h5>Return Value</h5>
+<p>Numeric: The requested version information.</p>
+
+<hr>
+<a name="StatusMessage"></a><h3>StatusMessage  Event</h3>
+<h5>Description</h5>
+<p>This event gets called during full-text index creation and can be sub-classed to support application-specific progress reporting.</p>
+<h5>Parameters</h5>
+<dl>
+<dt><i>nCurrentRecord</i></dt>
+<dd><p>The record currently being indexed.</p></dd>
+<dt><i>nTotalRecords</i></dt>
+<dd><p>The total number of records in the table being indexed.  You can use the expression nCurrentRecord / nTotalRecords * 100 to determine the percentage of the records that have already been indexed.</p></dd>
+<dt><i>nStartSeconds</i></dt>
+<dd><p>The value returned by the SECONDS() function at the start of the indexing process.  You can use the expression SECONDS() - nStartSeconds to determine how long the indexing process has been in progress.</p></dd>
+</dl>
+<h5>Notes</h5>
+<p>If this event is not sub-classed, then it will do one of the following:</p>
+<ul>
+<li>If the class was called by a FoxWeb script then it will write the current progress to the browser with the Response.Write method.</li>
+<li>If the class was not called by a FoxWeb script then it will write the current progress to the VFP status bar.</li>
+</ul>
+
+
+<hr>
+<p>
+<a href="http://www.foxweb.com/" style="text-decoration: none;"><small>&copy; Aegis Group</small></a>
+</p>
+</body>
+</html>
